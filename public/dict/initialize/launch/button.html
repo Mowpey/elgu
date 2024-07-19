@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Event Launcher</title>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+      body,
+      html {
+        font-family: "Poppins", sans-serif;
+        background-color: #1a1a1a;
+        overflow: hidden;
+      }
+      #background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        min-width: 100%;
+        height: 100%;
+      }
+      #countdownVideo {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        min-width: 100%;
+        height: 100%;
+        transform: translate(-50%, -50%);
+        object-fit: contain;
+      }
+      #playButton {
+        position: absolute;
+        bottom: 35%;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 2vh 4vw;
+        font-size: clamp(1rem, 2vw, 1.4rem);
+        font-weight: 600;
+        cursor: pointer;
+        background: linear-gradient(45deg, #ff00ff, #8a2be2, #ff1493);
+        color: #fff;
+        border: none;
+        border-radius: 35px;
+        transition: all 0.4s ease, transform 0.2s ease;
+        box-shadow: inset 0 -8px 0 0 rgba(0, 0, 0, 0.2),
+          inset 0 -10px 0 0 rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        animation: float 3s ease-in-out infinite;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: clamp(200px, 30vw, 300px);
+        height: clamp(60px, 9vh, 80px);
+        text-wrap: nowrap;
+        z-index: 10;
+        user-select: none;
+      }
+      #playButton:hover {
+        transform: translateX(-50%) translateY(-5px);
+        box-shadow: inset 0 -8px 0 0 rgba(0, 0, 0, 0.3),
+          inset 0 -10px 0 0 rgba(0, 0, 0, 0.2);
+      }
+      #playButton:active {
+        transform: translateX(-50%) translateY(2px);
+        box-shadow: inset 0 -4px 0 0 rgba(0, 0, 0, 0.2),
+          inset 0 -5px 0 0 rgba(0, 0, 0, 0.1);
+      }
+      #playButton::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.5) 0%,
+          rgba(255, 255, 255, 0) 70%
+        );
+        transform: scale(0);
+        transition: transform 0.6s;
+      }
+      #playButton:hover::before {
+        transform: scale(1);
+      }
+      #playButton .material-icons {
+        margin-right: 15px;
+        font-size: clamp(24px, 3vw, 36px);
+      }
+      @keyframes float {
+        0% {
+          transform: translateX(-50%) translateY(0px);
+        }
+        50% {
+          transform: translateX(-50%) translateY(-10px);
+        }
+        100% {
+          transform: translateX(-50%) translateY(0px);
+        }
+      }
+      #playButton::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 5%;
+        right: 5%;
+        height: 15px;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 50%;
+        filter: blur(5px);
+        z-index: -1;
+      }
+
+      #launchMessage {
+        position: absolute;
+        bottom: 35%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: clamp(1rem, 2vw, 1.4rem);
+        font-weight: 600;
+        color: #fff;
+        text-align: center;
+        display: none;
+      }
+
+      @keyframes buttonPress {
+        0% {
+          transform: translateX(-50%) scale(1);
+        }
+        100% {
+          transform: translateX(-50%) scale(0.95);
+        }
+      }
+
+      #playButton.pressed {
+        animation: buttonPress 0.3s forwards;
+      }
+
+      #progressBar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 4px;
+        background-color: #ffffff;
+        width: 0%;
+        transition: width 0.1s linear;
+      }
+
+      @media only screen and (min-width: 768px) and (max-width: 1024px) {
+        #playButton {
+          width: clamp(250px, 40vw, 350px);
+          height: clamp(70px, 10vh, 90px);
+          font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+        }
+        #playButton .material-icons {
+          font-size: clamp(28px, 3.5vw, 40px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="background">
+      <video id="countdownVideo" autoplay loop muted playsinline>
+        <source src="/videos/back_drop.mp4" type="video/mp4" />
+      </video>
+    </div>
+    <button id="playButton" class="btn">
+      <span class="material-icons">timer</span>
+      Start Countdown
+    </button>
+    <div id="progressBar"></div>
+    <div id="launchMessage">eLGU has already launched</div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const video = document.getElementById("countdownVideo");
+        const launchButton = document.getElementById("playButton");
+        const launchMessage = document.getElementById("launchMessage");
+        const progressBar = document.getElementById("progressBar");
+
+        if (video) video.play();
+
+        let pressTimer;
+        let progress = 0;
+
+        const socket = io();
+
+        socket.on("videoPlaying", () => {
+          if (launchButton) launchButton.style.display = "none";
+          if (launchMessage) launchMessage.style.display = "block";
+        });
+
+        if (launchButton) {
+          launchButton.addEventListener("mousedown", startPress);
+          launchButton.addEventListener("mouseup", endPress);
+          launchButton.addEventListener("mouseleave", endPress);
+          launchButton.addEventListener("touchstart", startPress);
+          launchButton.addEventListener("touchend", endPress);
+        }
+
+        // function updateProgress() {
+        //   progressBar.style.width = `${progress}%`;
+        //   if (progress < 100) {
+        //     progress += 3.33;
+        //     pressTimer = setTimeout(updateProgress, 100);
+        //   } else {
+        //     sendCountdown();
+        //   }
+        // }
+
+        function startPress(e) {
+          e.preventDefault();
+          pressTimer = setTimeout(() => {
+            sendCountdown();
+          }, 3000);
+          // updateProgress();
+        }
+
+        function endPress() {
+          clearTimeout(pressTimer);
+          // updateProgress();
+        }
+
+        function sendCountdown() {
+          socket.emit("playVideo");
+          if (launchButton) launchButton.style.display = "none";
+          if (launchMessage) launchMessage.style.display = "block";
+          console.log("Emitted playVideo event");
+        }
+      });
+    </script>
+  </body>
+</html>
