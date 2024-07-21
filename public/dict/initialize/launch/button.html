@@ -7,14 +7,7 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>Event Launcher</title>
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap"
-      rel="stylesheet"
-    />
+
     <script src="/socket.io/socket.io.js"></script>
     <style>
       body,
@@ -147,16 +140,6 @@
         animation: buttonPress 0.3s forwards;
       }
 
-      #progressBar {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        height: 4px;
-        background-color: #ffffff;
-        width: 0%;
-        transition: width 0.1s linear;
-      }
-
       @media only screen and (min-width: 768px) and (max-width: 1024px) {
         #playButton {
           width: clamp(250px, 40vw, 350px);
@@ -167,6 +150,35 @@
           font-size: clamp(28px, 3.5vw, 40px);
         }
       }
+
+      #launchContainer {
+        position: absolute;
+        bottom: 35%;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: clamp(200px, 30vw, 300px);
+      }
+
+      #progressBar {
+        width: 100%;
+        height: 1.5rem;
+        background-color: rgba(255, 255, 255, 0.3);
+        margin-top: 6rem;
+        border-radius: 15px;
+        overflow: hidden;
+      }
+
+      #progressFill {
+        width: 0%;
+        height: 100%;
+        background: linear-gradient(45deg, #ff00ff, #8a2be2, #ff1493);
+        background-size: 200% 200%;
+        animation: gradientFlow 3s ease infinite;
+        transition: width 0.1s linear;
+      }
     </style>
   </head>
   <body>
@@ -175,11 +187,27 @@
         <source src="/videos/back_drop.mp4" type="video/mp4" />
       </video>
     </div>
-    <button id="playButton" class="btn">
-      <span class="material-icons">timer</span>
-      Start Countdown
-    </button>
-    <div id="progressBar"></div>
+
+    <div id="launchContainer">
+      <button id="playButton" class="btn">
+        <span class="material-icons">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            fill="#ffffff"
+          >
+            <path
+              d="M360-840v-80h240v80H360Zm80 440h80v-240h-80v240Zm40 320q-74 0-139.5-28.5T226-186q-49-49-77.5-114.5T120-440q0-74 28.5-139.5T226-694q49-49 114.5-77.5T480-800q62 0 119 20t107 58l56-56 56 56-56 56q38 50 58 107t20 119q0 74-28.5 139.5T734-186q-49 49-114.5 77.5T480-80Zm0-80q116 0 198-82t82-198q0-116-82-198t-198-82q-116 0-198 82t-82 198q0 116 82 198t198 82Zm0-280Z"
+            /></svg
+        ></span>
+        Start Countdown
+      </button>
+      <div id="progressBar">
+        <div id="progressFill"></div>
+      </div>
+    </div>
     <div id="launchMessage">eLGU has already launched</div>
 
     <script>
@@ -187,12 +215,13 @@
         const video = document.getElementById("countdownVideo");
         const launchButton = document.getElementById("playButton");
         const launchMessage = document.getElementById("launchMessage");
-        const progressBar = document.getElementById("progressBar");
+        const progressFill = document.getElementById("progressFill");
 
         if (video) video.play();
 
         let pressTimer;
         let progress = 0;
+        let progressInterval;
 
         const socket = io();
 
@@ -209,34 +238,38 @@
           launchButton.addEventListener("touchend", endPress);
         }
 
-        // function updateProgress() {
-        //   progressBar.style.width = `${progress}%`;
-        //   if (progress < 100) {
-        //     progress += 3.33;
-        //     pressTimer = setTimeout(updateProgress, 100);
-        //   } else {
-        //     sendCountdown();
-        //   }
-        // }
-
         function startPress(e) {
           e.preventDefault();
+          progress = 0;
+          progressFill.style.width = "0%";
+
+          progressInterval = setInterval(() => {
+            progress += 1;
+            progressFill.style.width = `${progress}%`;
+
+            if (progress >= 100) {
+              clearInterval(progressInterval);
+              sendCountdown();
+            }
+          }, 30); // Update every 30ms for a smooth 3-second fill
+
           pressTimer = setTimeout(() => {
+            clearInterval(progressInterval);
             sendCountdown();
           }, 3000);
-          // updateProgress();
         }
 
         function endPress() {
           clearTimeout(pressTimer);
-          // updateProgress();
+          clearInterval(progressInterval);
+          progressFill.style.width = "0%";
         }
 
         function sendCountdown() {
           socket.emit("playVideo");
           if (launchButton) launchButton.style.display = "none";
           if (launchMessage) launchMessage.style.display = "block";
-          console.log("Emitted playVideo event");
+          if (progressBar) progressBar.style.display = "none";
         }
       });
     </script>
