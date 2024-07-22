@@ -28,6 +28,10 @@ app.get("/video", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "video.html"));
 });
 
+app.get("/main/admin/only/main-video.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/main/admin/only/main-video.html"));
+});
+
 io.on("connection", (socket) => {
   console.log("A user connected");
 
