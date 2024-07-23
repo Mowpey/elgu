@@ -17,7 +17,7 @@ Before you begin, ensure you have met the following requirements:
 npm install
 ```
 
-## unning the Application
+## Running the Application
 
 1. Start the server:
 
@@ -29,4 +29,14 @@ npm start
 
 ```sh
 http://localhost:3001
+```
+
+3. To check the video with sounds go to:
+```sh
+http://localhost:3001/main/admin/only/main-video.html
+```
+
+4. To start the launching button go to:
+```sh
+http://localhost:3001/dict/initialize/launch/button.html
 ```
