@@ -25,6 +25,7 @@
         font-family: Arial, sans-serif;
       }
       #videoContainer {
+        display: none;
         position: fixed;
         top: 0;
         left: 0;
@@ -47,52 +48,113 @@
         color: white;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
       }
-      #nextButton {
-        position: absolute;
-        bottom: 5%;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 15px 30px;
-        font-size: 4vw;
-        display: none;
-        cursor: pointer;
-        background-color: #4caf50;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        transition: all 0.3s ease;
-      }
-      #nextButton:hover {
-        background-color: #45a049;
-      }
       .full-width-image {
         width: 100%;
         height: auto;
         display: none;
       }
 
-      #randomButton {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        background-color: #4caf50;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        transition: all 0.3s ease;
-        z-index: 200;
+      #modal {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
       }
-      #randomButton:hover {
-        background-color: #45a049;
+      #modal-content {
+        padding: clamp(1rem, 2rem, 4rem);
+        border-radius: 15px;
+        text-align: center;
+        background-color: #0d508f;
+        margin: 0 1.5rem;
+      }
+
+      #participateBtn {
+        padding: 1rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 15px;
+        border: none;
+        color: beige;
+        -webkit-box-shadow: 5px 8px 9px 0px rgba(13, 80, 143, 1);
+        -moz-box-shadow: 5px 8px 9px 0px rgba(13, 80, 143, 1);
+        box-shadow: 3px 3px 9px 0px rgba(13, 80, 143, 1);
+        background-image: linear-gradient(
+          to right top,
+          #0d508f,
+          #16569a,
+          #1f5ca4,
+          #2761af,
+          #3067ba,
+          #2874c5,
+          #2081cf,
+          #1a8ed8,
+          #27a4dd,
+          #4bb9e0,
+          #71cce2,
+          #97dee5
+        );
+        animation: float 2s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+        100% {
+          transform: translateY(0px);
+        }
+      }
+
+      .logo {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+      }
+
+      img {
+        max-width: 1.4rem;
+        object-fit: contain;
+      }
+      h2 {
+        font-size: 1.2rem;
+        line-height: 1.5;
+        color: white;
+        font-family: monospace;
+        margin-block: 2rem;
       }
     </style>
   </head>
   <body>
+    <div id="modal">
+      <div id="modal-content">
+        <div class="logo">
+          <img src="assets/arta.png" alt="arta-logo" />
+          <img src="assets/bagong_pilipinas.png" alt="bp-logo" />
+          <img src="assets/batanes.png" alt="batanes-logo" />
+          <img src="assets/dict.png" alt="dict-logo" />
+          <img src="assets/dilg.png" alt="dilg-logo" />
+          <img src="assets/dti.png" alt="dti-logo" />
+          <img src="assets/eLGU.png" alt="eLGU-logo" />
+          <img src="assets/psa.png" alt="psa-logo" />
+        </div>
+        <h2>
+          Click the button below <br />
+          to view the video.
+        </h2>
+        <button id="participateBtn">Participate</button>
+      </div>
+    </div>
+
     <div style="position: relative">
-      <button id="randomButton">Click this Button to Hide</button>
       <div id="background">
         <video
           id="backdropVideo"
@@ -126,11 +188,10 @@
       const videoContainer = document.getElementById("videoContainer");
       const countdownVideo = document.getElementById("countdownVideo");
       const loopingVideo = document.getElementById("loopingVideo");
-      const randomButton = document.getElementById("randomButton");
+      const modal = document.getElementById("modal");
+      const participateBtn = document.getElementById("participateBtn");
 
-      randomButton.addEventListener("click", function (e) {
-        e.target.style.display = "none";
-      });
+      let hasParticipated = false;
 
       countdownVideo.addEventListener("ended", function () {
         countdownVideo.style.display = "none";
@@ -138,82 +199,26 @@
         loopingVideo.play();
       });
 
-      socket.on("playVideo", () => {
-        console.log("Received playVideo event");
-        videoContainer.style.display = "block";
-        backdropVideo.style.display = "none";
-        countdownVideo
-          .play()
-          .catch((e) => console.error("Error playing video:", e));
-      });
-    </script>
-    <!-- <script>
-      const socket = io();
-
-      socket.on("connect", () => {
-        console.log("Connected to server");
-      });
-
-      const backdropVideo = document.getElementById("backdropVideo");
-      const videoContainer = document.getElementById("videoContainer");
-      const countdownVideo = document.getElementById("countdownVideo");
-      const loopingVideo = document.getElementById("loopingVideo");
-      const randomButton = document.getElementById("randomButton");
-
-      randomButton.addEventListener("click", function (e) {
-        e.target.style.display = "none";
-      });
-
-      countdownVideo.addEventListener("ended", function () {
-        countdownVideo.style.display = "none";
-        loopingVideo.style.display = "block";
-        loopingVideo
-          .play()
-          .catch((e) => console.error("Error playing looping video:", e));
-      });
-
-      // Function to attempt playing the video
-      function attemptPlay() {
-        countdownVideo.muted = true; // Mute the video initially
-        countdownVideo
-          .play()
-          .then(() => {
-            // If successful, unmute the video
-            countdownVideo.muted = false;
-          })
-          .catch((e) => {
-            console.error("Error playing video:", e);
-            // If autoplay fails, show a play button
-            showPlayButton();
-          });
-      }
-
-      // Function to show a play button
-      function showPlayButton() {
-        const playButton = document.createElement("button");
-        playButton.textContent = "Play Video";
-        playButton.style.position = "absolute";
-        playButton.style.zIndex = "1000";
-        playButton.style.top = "50%";
-        playButton.style.left = "50%";
-        playButton.style.transform = "translate(-50%, -50%)";
-        playButton.onclick = () => {
-          countdownVideo.muted = false;
+      function playVideo() {
+        if (hasParticipated) {
+          console.log("Playing video after participation");
+          videoContainer.style.display = "block";
+          backdropVideo.style.display = "none";
+          countdownVideo.style.display = "block";
           countdownVideo
             .play()
             .catch((e) => console.error("Error playing video:", e));
-          playButton.remove();
-        };
-        videoContainer.appendChild(playButton);
+        } else {
+          console.log("Cannot play video before participation");
+        }
       }
 
-      socket.on("playVideo", () => {
-        console.log("Received playVideo event");
-        videoContainer.style.display = "block";
-        backdropVideo.style.display = "none";
-        randomButton.style.display = "none"; // Hide the random button
-        attemptPlay();
+      socket.on("playVideo", playVideo);
+
+      participateBtn.addEventListener("click", function () {
+        modal.style.display = "none";
+        hasParticipated = true;
       });
-    </script> -->
+    </script>
   </body>
 </html>

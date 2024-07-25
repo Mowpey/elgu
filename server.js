@@ -13,6 +13,13 @@ app.use(
     immutable: false,
   })
 );
+app.use(
+  "/assets",
+  express.static(path.join(__dirname, "public/assets"), {
+    maxAge: "1d",
+    immutable: false,
+  })
+);
 
 app.use("/dict/initialize/launch/button.html", (req, res) => {
   res.sendFile(
