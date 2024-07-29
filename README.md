@@ -40,3 +40,4 @@ http://localhost:3001/main/admin/only/main-video.html
 ```sh
 http://localhost:3001/dict/initialize/launch/button.html
 ```
+5. If the browser is loading the old video. Try to clear cookies and cache then restart the browser.
