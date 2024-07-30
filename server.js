@@ -11,19 +11,19 @@ app.use(
   express.static(path.join(__dirname, "public/videos"), {
     maxAge: "1d",
     immutable: false,
-  }),
+  })
 );
 app.use(
   "/assets",
   express.static(path.join(__dirname, "public/assets"), {
     maxAge: "1d",
     immutable: false,
-  }),
+  })
 );
 
 app.use("/dict/initialize/launch/button.html", (req, res) => {
   res.sendFile(
-    path.join(__dirname, "public/dict/initialize/launch/button.html"),
+    path.join(__dirname, "public/dict/initialize/launch/button.html")
   );
 });
 
@@ -47,7 +47,7 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3333;
 http.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

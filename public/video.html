@@ -1,221 +1,224 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Video Page</title>
-        <script src="/socket.io/socket.io.js"></script>
-        <style>
-            #background {
-                width: 100vw;
-                height: 100vh;
-            }
-            video {
-                width: 100% !important;
-                height: 100% !important;
-                object-fit: fill !important;
-            }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Page</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+      #background {
+        width: 100vw;
+        height: 100vh;
+      }
+      video {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: fill !important;
+      }
 
-            body,
-            html {
-                margin: 0;
-                padding: 0;
-                height: 100%;
-                overflow: hidden;
-                font-family: Arial, sans-serif;
-            }
-            #videoContainer {
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                z-index: -1;
-            }
-            #countdownVideo,
-            #backdrop {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
-            #countdownDisplay {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                font-size: 10vw;
-                color: white;
-                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            }
-            .full-width-image {
-                width: 100%;
-                height: auto;
-                display: none;
-            }
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+      }
+      #videoContainer {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+      }
+      #countdownVideo,
+      #backdrop {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      #countdownDisplay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 10vw;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+      .full-width-image {
+        width: 100%;
+        height: auto;
+        display: none;
+      }
 
-            #modal {
-                display: flex;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.5);
-                justify-content: center;
-                align-items: center;
-                z-index: 1000;
-            }
-            #modal-content {
-                padding: clamp(1rem, 2rem, 4rem);
-                border-radius: 15px;
-                text-align: center;
-                background-color: #0d508f;
-                margin: 0 1.5rem;
-            }
+      #modal {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+      #modal-content {
+        padding: clamp(1rem, 2rem, 4rem);
+        border-radius: 15px;
+        text-align: center;
+        background-color: #0d508f;
+        margin: 0 1.5rem;
+      }
 
-            #participateBtn {
-                padding: 1rem;
-                font-size: 1rem;
-                font-weight: 600;
-                border-radius: 15px;
-                border: none;
-                color: beige;
-                -webkit-box-shadow: 5px 8px 9px 0px rgba(13, 80, 143, 1);
-                -moz-box-shadow: 5px 8px 9px 0px rgba(13, 80, 143, 1);
-                box-shadow: 3px 3px 9px 0px rgba(13, 80, 143, 1);
-                background-image: linear-gradient(
-                    to right top,
-                    #0d508f,
-                    #16569a,
-                    #1f5ca4,
-                    #2761af,
-                    #3067ba,
-                    #2874c5,
-                    #2081cf,
-                    #1a8ed8,
-                    #27a4dd,
-                    #4bb9e0,
-                    #71cce2,
-                    #97dee5
-                );
-                animation: float 2s ease-in-out infinite;
-            }
+      #participateBtn {
+        padding: 1rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 15px;
+        border: none;
+        color: beige;
+        -webkit-box-shadow: 5px 8px 9px 0px rgba(13, 80, 143, 1);
+        -moz-box-shadow: 5px 8px 9px 0px rgba(13, 80, 143, 1);
+        box-shadow: 3px 3px 9px 0px rgba(13, 80, 143, 1);
+        background-image: linear-gradient(
+          to right top,
+          #0d508f,
+          #16569a,
+          #1f5ca4,
+          #2761af,
+          #3067ba,
+          #2874c5,
+          #2081cf,
+          #1a8ed8,
+          #27a4dd,
+          #4bb9e0,
+          #71cce2,
+          #97dee5
+        );
+        animation: float 2s ease-in-out infinite;
+      }
 
-            @keyframes float {
-                0% {
-                    transform: translateY(0px);
-                }
-                50% {
-                    transform: translateY(-10px);
-                }
-                100% {
-                    transform: translateY(0px);
-                }
-            }
+      @keyframes float {
+        0% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+        100% {
+          transform: translateY(0px);
+        }
+      }
 
-            .logo {
-                display: flex;
-                gap: 10px;
-                justify-content: center;
-            }
+      .logo {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+      }
 
-            img {
-                max-width: 1.4rem;
-                object-fit: contain;
-            }
-            h2 {
-                font-size: 1.2rem;
-                line-height: 1.5;
-                color: white;
-                font-family: monospace;
-                margin-block: 2rem;
-            }
-        </style>
-    </head>
-    <body>
-        <div id="modal">
-            <div id="modal-content">
-                <div class="logo">
-                    <img src="assets/arta.png" alt="arta-logo" />
-                    <img src="assets/bagong_pilipinas.png" alt="bp-logo" />
-                    <img src="assets/batanes.png" alt="batanes-logo" />
-                    <img src="assets/dict.png" alt="dict-logo" />
-                    <img src="assets/dilg.png" alt="dilg-logo" />
-                    <img src="assets/dti.png" alt="dti-logo" />
-                    <img src="assets/eLGU.png" alt="eLGU-logo" />
-                    <img src="assets/psa.png" alt="psa-logo" />
-                </div>
-                <h2>
-                    Click the button below <br />
-                    to view the video.
-                </h2>
-                <button id="participateBtn">Participate</button>
-            </div>
+      img {
+        max-width: 1.4rem;
+        object-fit: contain;
+      }
+      h2 {
+        font-size: 1.2rem;
+        line-height: 1.5;
+        color: white;
+        font-family: monospace;
+        margin-block: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="modal">
+      <div id="modal-content">
+        <div class="logo">
+          <img src="assets/arta.png" alt="arta-logo" />
+          <img src="assets/bagong_pilipinas.png" alt="bp-logo" />
+          <img src="assets/batanes.png" alt="batanes-logo" />
+          <img src="assets/dict.png" alt="dict-logo" />
+          <img src="assets/dilg.png" alt="dilg-logo" />
+          <img src="assets/dti.png" alt="dti-logo" />
+          <img src="assets/eLGU.png" alt="eLGU-logo" />
+          <img src="assets/psa.png" alt="psa-logo" />
         </div>
+        <h2>
+          Click the button below <br />
+          to view the video.
+        </h2>
+        <button id="participateBtn">Participate</button>
+      </div>
+    </div>
 
-        <div style="position: relative">
-            <div id="background">
-                <video
-                    id="backdropVideo"
-                    autoplay
-                    loop
-                    muted
-                    playsinline
-                    preload="auto"
-                >
-                    <source src="videos/backdrop.mp4" type="video/mp4" />
-                </video>
-            </div>
-            <div id="videoContainer">
-                <video id="countdownVideo" muted playsinline preload="auto">
-                    <source src="videos/countdown-new.mp4" type="video/mp4" />
-                </video>
-            </div>
-        </div>
+    <div style="position: relative">
+      <div id="background">
+        <video
+          id="backdropVideo"
+          autoplay
+          loop
+          muted
+          playsinline
+          preload="auto"
+        >
+          <source src="videos/backdrop-fw.mp4" type="video/mp4" />
+        </video>
+      </div>
+      <div id="videoContainer">
+        <video id="countdownVideo" playsinline preload="auto">
+          <source src="videos/countdown-new.mp4" type="video/mp4" />
+        </video>
+        <video id="loopingVideo" loop playsinline preload="auto">
+          <source src="videos/last-loop.mp4" type="video/mp4" />
+        </video>
+      </div>
+    </div>
 
-        <script>
-            const socket = io();
+    <script>
+      const socket = io();
 
-            socket.on("connect", () => {
-                console.log("Connected to server");
-            });
+      socket.on("connect", () => {
+        console.log("Connected to server");
+      });
 
-            const backdropVideo = document.getElementById("backdropVideo");
-            const videoContainer = document.getElementById("videoContainer");
-            const countdownVideo = document.getElementById("countdownVideo");
-            const loopingVideo = document.getElementById("loopingVideo");
-            const modal = document.getElementById("modal");
-            const participateBtn = document.getElementById("participateBtn");
+      const backdropVideo = document.getElementById("backdropVideo");
+      const videoContainer = document.getElementById("videoContainer");
+      const countdownVideo = document.getElementById("countdownVideo");
+      const loopingVideo = document.getElementById("loopingVideo");
+      const modal = document.getElementById("modal");
+      const participateBtn = document.getElementById("participateBtn");
 
-            let hasParticipated = false;
+      let hasParticipated = false;
 
-            countdownVideo.addEventListener("ended", function () {
-                countdownVideo.style.display = "none";
-                loopingVideo.style.display = "block";
-                loopingVideo.play();
-            });
+      countdownVideo.addEventListener("ended", function () {
+        countdownVideo.style.display = "none";
+        loopingVideo.style.display = "block";
+        loopingVideo.play();
+      });
 
-            function playVideo() {
-                if (hasParticipated) {
-                    console.log("Playing video after participation");
-                    videoContainer.style.display = "block";
-                    backdropVideo.style.display = "none";
-                    countdownVideo.style.display = "block";
-                    countdownVideo
-                        .play()
-                        .catch((e) => console.error("Error playing video:", e));
-                } else {
-                    console.log("Cannot play video before participation");
-                }
-            }
+      function playVideo() {
+        if (hasParticipated) {
+          console.log("Playing video after participation");
+          videoContainer.style.display = "block";
+          backdropVideo.style.display = "none";
+          countdownVideo.style.display = "block";
+          countdownVideo
+            .play()
+            .catch((e) => console.error("Error playing video:", e));
+        } else {
+          console.log("Cannot play video before participation");
+        }
+      }
 
-            socket.on("playVideo", playVideo);
+      socket.on("playVideo", playVideo);
 
-            participateBtn.addEventListener("click", function () {
-                modal.style.display = "none";
-                hasParticipated = true;
-            });
-        </script>
-    </body>
+      participateBtn.addEventListener("click", function () {
+        modal.style.display = "none";
+        hasParticipated = true;
+      });
+    </script>
+  </body>
 </html>

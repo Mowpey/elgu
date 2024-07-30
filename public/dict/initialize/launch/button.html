@@ -41,7 +41,12 @@
         font-size: clamp(1rem, 2vw, 1.4rem);
         font-weight: 600;
         cursor: pointer;
-        background: linear-gradient(45deg, #ff00ff, #8a2be2, #ff1493);
+        background: linear-gradient(
+          90deg,
+          rgba(58, 12, 184, 1) 0%,
+          rgba(16, 16, 166, 1) 35%,
+          rgba(25, 203, 240, 1) 100%
+        );
         color: #fff;
         border: none;
         border-radius: 35px;
@@ -117,12 +122,12 @@
 
       #launchMessage {
         position: absolute;
-        bottom: 35%;
+        bottom: 10%;
         left: 50%;
         transform: translateX(-50%);
         font-size: clamp(1rem, 2vw, 1.4rem);
         font-weight: 600;
-        color: #fff;
+        color: #0c0b0b;
         text-align: center;
         display: none;
       }
@@ -153,7 +158,7 @@
 
       #launchContainer {
         position: absolute;
-        bottom: 25%;
+        bottom: 10%;
         left: 50%;
         transform: translateX(-50%);
         display: flex;
@@ -169,12 +174,18 @@
         margin-top: 6rem;
         border-radius: 15px;
         overflow: hidden;
+        border: 2px solid rgb(175, 170, 170);
       }
 
       #progressFill {
         width: 0%;
         height: 100%;
-        background: linear-gradient(45deg, #ff00ff, #8a2be2, #ff1493);
+        background: linear-gradient(
+          90deg,
+          rgba(58, 12, 184, 1) 0%,
+          rgba(16, 16, 166, 1) 35%,
+          rgba(25, 203, 240, 1) 100%
+        );
         background-size: 200% 200%;
         animation: gradientFlow 3s ease infinite;
         transition: width 0.1s linear;
@@ -184,7 +195,7 @@
   <body>
     <div id="background">
       <video id="countdownVideo" autoplay loop muted playsinline>
-        <source src="/videos/back_drop.mp4" type="video/mp4" />
+        <source src="/videos/backdrop-ipad.mp4" type="video/mp4" />
       </video>
     </div>
 
