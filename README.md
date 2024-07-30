@@ -28,16 +28,11 @@ npm start
 2. Open your web browser and navigate to:
 
 ```sh
-http://localhost:3001
+http://localhost:3333
 ```
 
-3. To check the video with sounds go to:
+3. To start the launching button go to:
 ```sh
-http://localhost:3001/main/admin/only/main-video.html
+http://localhost:3333/dict/initialize/launch/button.html
 ```
-
-4. To start the launching button go to:
-```sh
-http://localhost:3001/dict/initialize/launch/button.html
-```
-5. If the browser is loading the old video. Try to clear cookies and cache then restart the browser.
+4. If the browser is loading the old video. Try to clear cookies and cache then restart the browser.
