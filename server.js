@@ -11,19 +11,19 @@ app.use(
   express.static(path.join(__dirname, "public/videos"), {
     maxAge: "1d",
     immutable: false,
-  })
+  }),
 );
 app.use(
   "/assets",
   express.static(path.join(__dirname, "public/assets"), {
     maxAge: "1d",
     immutable: false,
-  })
+  }),
 );
 
 app.use("/dict/initialize/launch/button.html", (req, res) => {
   res.sendFile(
-    path.join(__dirname, "public/dict/initialize/launch/button.html")
+    path.join(__dirname, "public/dict/initialize/launch/button.html"),
   );
 });
 
@@ -33,10 +33,6 @@ app.get("/", (req, res) => {
 
 app.get("/video", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "video.html"));
-});
-
-app.get("/main/admin/only/main-video.html", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/main/admin/only/main-video.html"));
 });
 
 io.on("connection", (socket) => {
